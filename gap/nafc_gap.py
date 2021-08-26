@@ -10,8 +10,6 @@ from autopilot.networking import Net_Node
 from autopilot.utils.common import find_key_recursive
 from autopilot import prefs
 
-Digital_Out = autopilot.get('hardware', 'Digital_Out')
-
 class Nafc_Gap(Nafc):
     PARAMS = copy(Nafc.PARAMS)
     del PARAMS['punish_stim']
