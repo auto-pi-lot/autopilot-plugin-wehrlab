@@ -1,12 +1,16 @@
 from copy import copy
 import typing
 import numpy as np
+import tables
+import itertools
 
 import autopilot
 from autopilot.tasks.nafc import Nafc
 from autopilot.networking import Net_Node
 from autopilot.utils.common import find_key_recursive
 from autopilot import prefs
+
+Digital_Out = autopilot.get('hardware', 'Digital_Out')
 
 class Nafc_Gap(Nafc):
     PARAMS = copy(Nafc.PARAMS)
@@ -71,10 +75,11 @@ class Nafc_Gap_Laser(Nafc_Gap):
     HARDWARE = copy(Nafc_Gap.HARDWARE)
 
     HARDWARE['LASERS'] = {
-        'LR': gpio.Digital_Out
+        'LR': 'Digital_Out'
     }
 
-    HARDWARE['LEDS']['TOP'] = gpio.Digital_Out
+
+    HARDWARE['LEDS']['TOP'] = 'Digital_Out'
 
     TrialData = copy(Nafc_Gap.TrialData)
     TrialData.laser = tables.Int32Col()
