@@ -66,9 +66,9 @@ class Nafc_Gap_Laser(Nafc_Gap):
                                   'type': 'str'}
     PARAMS['laser_durations'] = {'tag': 'Laser durations (ms), list-like [10, 20]. if blank, use durations from stimuli',
                                  'type': 'str'}
-    PARAMS['arena_led_mode'] = {'tag': 'Arena LED Mode: always ON vs. on for longest stim duration during requests',
+    PARAMS['arena_led_mode'] = {'tag': 'Arena LED Mode: always ON vs. on for longest stim or laser duration during requests',
                                 'type': 'list',
-                                'values':{'ON': 0, 'STIM': 1}}
+                                'values':{'ON': 0, 'STIM': 1, 'LASER': 2}}
 
     HARDWARE = copy(Nafc_Gap.HARDWARE)
 
@@ -76,14 +76,13 @@ class Nafc_Gap_Laser(Nafc_Gap):
         'LR': 'Digital_Out'
     }
 
-
     HARDWARE['LEDS']['TOP'] = 'Digital_Out'
 
-    TrialData = copy(Nafc_Gap.TrialData)
-    TrialData.laser = tables.Int32Col()
-    TrialData.laser_duration = tables.Float32Col()
-    TrialData.laser_freq = tables.Float32Col()
-    TrialData.laser_duty_cycle = tables.Float32Col()
+    class TrialData(Nafc_Gap.TrialData):
+        laser = tables.Int32Col()
+        laser_duration = tables.Float32Col()
+        laser_freq = tables.Float32Col()
+        laser_duty_cycle = tables.Float32Col()
 
 
     def __init__(self,
@@ -109,25 +108,24 @@ class Nafc_Gap_Laser(Nafc_Gap):
 
         Args:
             laser_probability (float): if trial satisfies ``laser_mode``, probability that laser will be
-            laser_mode ('L', 'R', or 'Both'): Selects whether the laser is to be presented when :attr:`.target` is ``'L', 'R'`` or Either.
+            laser_mode ('L', 'R', or 'BOTH'): Selects whether the laser is to be presented when :attr:`.target` is ``'L', 'R'`` or Either.
             laser_freq (str, list): Single value or list of possible laser frequencies in Hz
             laser_duty_cycle (str, list): Single value or list of possible duty cycles from 0-1
             laser_durations (str, list): Single value or list of possible laser durations (total time laser is on) in ms
             arena_led_mode ('ON', 'STIM'): Whether the overhead LED should always be 'ON', or whether it should be illuminated for the duration of the longest stimulus at every request
 
         Attributes:
-            laser_conditions (tuple): tuple of dicts of laser conditions, of format:
-                ::
+            laser_conditions (tuple): tuple of dicts of laser conditions, of format::
 
-                    {
-                    'freq': laser frequency,
-                    'duty_cycle': laser duty cycle,
-                    'duration': laser duration,
-                    'script_id': script ID for the series used by the laser Digital Out object,
-                    }
+                {
+                'freq': laser frequency,
+                'duty_cycle': laser duty cycle,
+                'duration': laser duration,
+                'script_id': script ID for the series used by the laser Digital Out object,
+                }
         """
         self.laser_probability = float(laser_probability)
-        self.laser_mode = laser_mode
+        self.laser_mode = str(laser_mode).upper()
         self.arena_led_mode = arena_led_mode
 
         # accept them if we're given a list of values, otherwise they should be strings that are single values,
@@ -137,25 +135,34 @@ class Nafc_Gap_Laser(Nafc_Gap):
         self.laser_durations = laser_durations if isinstance(laser_durations, list) else [float(laser_durations)] # type: list
 
         self.laser_conditions = tuple() # type: typing.Tuple[typing.Dict]
+        self.laser_script = None
 
         super(Nafc_Gap_Laser, self).__init__(**kwargs)
+
+        # check for valid laser_mode
+        if self.laser_mode not in ('L', 'R', 'BOTH'):
+            err_text = f"Got invalid laser_mode, need one of 'L', 'R', 'BOTH', got {self.laser_mode}"
+            self.logger.exception(err_text)
+            raise ValueError(err_text)
 
         self.init_lasers()
 
         # -----------------------------------
         # create a pulse for the LED that's equal to the longest stimulus duration
-        # use find_key_recursive to find all durations
+        # use find_recursive to find all durations
         # FIXME: implement stimulus managers properly, including API to get attributes of stimuli
         if self.arena_led_mode == "ON":
             self.hardware['LEDS']['TOP'].turn(True)
         elif self.arena_led_mode == "STIM":
-            stim_durations = list(find_key_recursive('duration', kwargs['stim']))
-            stim_durations = [float(n) for n in stim_durations]
-            self.logger.debug(f'stim durations: {stim_durations}')
-            max_duration = np.max(stim_durations)
+            stim_durations = list(find_recursive('duration', kwargs['stim']))
+            stim_durations_int = [int(i) for i in stim_durations]
+            max_duration = int(np.max(stim_durations_int))
             self.hardware['LEDS']['TOP'].store_series('on', values=1, durations=max_duration )
+        elif self.arena_led_mode == "LASER":
+            #assuming for now we have only a single laser duration, since I can't quite get the max duration to work for the str list
+            self.hardware['LEDS']['TOP'].store_series('on', values=1, durations=int(self.laser_durations) )
         else:
-            raise ValueError(f'arena_led_mode must be one of ON or STIM, got {self.arena_led_mode}')
+            raise ValueError(f'arena_led_mode must be one of ON or STIM or LASER, got {self.arena_led_mode}')
 
     def init_lasers(self):
         """
@@ -225,8 +232,13 @@ class Nafc_Gap_Laser(Nafc_Gap):
 
         If we present a laser on this trial, we randomly draw from :attr:`.laser_conditions` and call the appropriate script.
         """
+        # lock the triggers dict while we modify it
+        # (so handle_triggers will not call any of them while we are still preparing the stage)
+        self.trigger_lock.acquire()
+
         # call the super method
         data = super(Nafc_Gap_Laser, self).request(*args, **kwargs)
+        self.logger.debug(f'triggers: {self.triggers} ')
 
         # handle laser logic
         # if the laser_mode is fulfilled, roll for a laser
@@ -235,7 +247,7 @@ class Nafc_Gap_Laser(Nafc_Gap):
             test_laser = True
         elif self.laser_mode == "R" and self.target == "R":
             test_laser = True
-        elif self.laser_mode == "Both":
+        elif self.laser_mode == "BOTH":
             test_laser = True
 
         duration = 0
@@ -248,17 +260,24 @@ class Nafc_Gap_Laser(Nafc_Gap):
                 do_laser = True
 
                 # If we're doing laser, we don't do the stim, so we pop the first two triggers
-                del self.triggers['C'][:2]
+                #del self.triggers['C'][:2]
+                #mike 1.19.21
 
                 # pick a random duration
                 condition = np.random.choice(self.laser_conditions)
                 duration = condition['duration']
                 duty_cycle = condition['duty_cycle']
                 frequency = condition['freq']
+                #store laser condition
+                self.laser_script=condition
                 # insert the laser triggers before the rest of the triggers
-                self.triggers['C'].insert(0, lambda: self.hardware['LASERS']['LR'].series(id=condition['script_id']))
+                # self.triggers['C'].insert(0, lambda: self.hardware['LASERS']['LR'].series(id=condition['script_id']))
+                # this would turn the laser on at gap onset, but instead we want it at gap termination so see stim_end
+        else:
+            self.laser_script = None
 
-        # always turn the light on
+
+        # always turn the light on if arena mode is STIM
         if self.arena_led_mode == "STIM":
             self.triggers['C'].insert(0, lambda: self.hardware['LEDS']['TOP'].series(id='on'))
 
@@ -269,8 +288,27 @@ class Nafc_Gap_Laser(Nafc_Gap):
         data['laser_duty_cycle'] = duty_cycle
         data['laser_frequency'] = frequency
 
+        self.trigger_lock.release()
+
         # return the data created by the original task
         return data
+
+    def stim_end(self):
+        """
+        called by stimulus callback at the end of the sound
+        since this is gap-laser, this is where we deliver laser at gap termination
+        and where we turn on the arena LED if arena mode is set to LASER
+        """
+        if self.laser_script is not None:
+            condition=self.laser_script
+            self.hardware['LASERS']['LR'].series(id=condition['script_id'])
+
+        if self.arena_led_mode == "LASER":
+            with self.trigger_lock:
+                if 'C' in self.triggers.keys():
+                    self.triggers['C'].insert(0, lambda: self.hardware['LEDS']['TOP'].series(id='on'))
+                else:
+                    self.triggers['C'] = [lambda: self.hardware['LEDS']['TOP'].series(id='on')]
 
     def set_leds(self, color_dict=None):
         """
