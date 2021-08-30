@@ -154,7 +154,7 @@ class Nafc_Gap_Laser(Nafc_Gap):
         if self.arena_led_mode == "ON":
             self.hardware['LEDS']['TOP'].turn(True)
         elif self.arena_led_mode == "STIM":
-            stim_durations = list(find_recursive('duration', kwargs['stim']))
+            stim_durations = list(find_key_recursive('duration', kwargs['stim']))
             stim_durations_int = [int(i) for i in stim_durations]
             max_duration = int(np.max(stim_durations_int))
             self.hardware['LEDS']['TOP'].store_series('on', values=1, durations=max_duration )
