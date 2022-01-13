@@ -40,6 +40,13 @@ class Nafc_Gap(Nafc):
         self.noise.play_continuous()
         self.logger.debug('background sound started')
 
+    def reinforcement(self, *args, **kwargs) -> dict:
+        data = super(Nafc_Gap, self).reinforcement(*args, **kwargs)
+
+        self.noise.buffer_continuous()
+
+        return data
+
 
     def end(self):
         """
