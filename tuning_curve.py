@@ -88,7 +88,6 @@ class TuningCurve(Task):
 		Stage 0: a single tone and interval.
 		Returns: just the trial number
 		"""
- https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
 
 
 		self.hardware['LEDS']['dLED'].set(1)
@@ -109,8 +108,6 @@ class TuningCurve(Task):
 		self.hardware['LEDS']['dLED'].set(0)
 		#self.logger.debug('light off')
 		time.sleep(inter_stimulus_interval/1000)
-
-$ git clone https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
 
 		self.current_trial = next(self.trial_counter)
 		self.current_stage = 0
