@@ -12,8 +12,7 @@ import autopilot.hardware.gpio
 from autopilot.hardware import gpio
 from autopilot.tasks import Task
 from collections import OrderedDict as odict
-from autopilot.core.networking import Net_Node
-from autopilot.core.utils import find_recursive
+from autopilot.networking.node import Net_Node
 from autopilot.stim.sound import sounds
 from autopilot.stim import init_manager
 
@@ -23,12 +22,12 @@ import pdb
 import pickle
 
 TASK = 'TuningCurve'
-	#Note that when you write a new task, you have to add it to autopilot/autopilot/tasks/__init__.py
 
 class TuningCurve(Task):
 
 	# play an array of tones and/or whitenoise
 
+$ git clone https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
 
 	STAGE_NAMES = ["playtone"] 
 	#there's only one stage, which consists of a single LED flash and play a tone
@@ -91,6 +90,8 @@ class TuningCurve(Task):
 		Stage 0: a single tone and interval.
 		Returns: just the trial number
 		"""
+ https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
+
 
 		self.hardware['LEDS']['dLED'].set(1)
 
@@ -111,6 +112,7 @@ class TuningCurve(Task):
 		#self.logger.debug('light off')
 		time.sleep(inter_stimulus_interval/1000)
 
+$ git clone https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
 
 		self.current_trial = next(self.trial_counter)
 		self.current_stage = 0
