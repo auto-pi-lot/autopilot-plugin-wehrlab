@@ -99,7 +99,7 @@ class TuningCurve(Task):
 		inter_stimulus_interval=self.inter_stimulus_interval
 
 		# buffer it
-		#self.stim.buffer()
+		self.stim.buffer()
 
 		self.stim.play()
 
