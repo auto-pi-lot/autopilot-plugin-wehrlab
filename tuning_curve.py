@@ -27,8 +27,6 @@ class TuningCurve(Task):
 
 	# play an array of tones and/or whitenoise
 
-$ git clone https://github.com/auto-pi-lot/autopilot-plugin-wehrlab.git
-
 	STAGE_NAMES = ["playtone"] 
 	#there's only one stage, which consists of a single LED flash and play a tone
 
