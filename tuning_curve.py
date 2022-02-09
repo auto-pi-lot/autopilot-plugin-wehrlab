@@ -33,8 +33,9 @@ class TuningCurve(Task):
 
 	PARAMS = odict()
 	PARAMS['inter_stimulus_interval'] = {'tag':'Inter Stimulus Interval (ms)', 'type':'int'}
-	PARAMS['stim'] = {'tag':'Sounds','type':'sounds'}
-
+	PARAMS['frequency'] = {'tag':'Sounds','type':'str'}
+	PARAMS['amplitude'] = {'tag':'Sounds','type':'str'}
+	PARAMS['duration'] = {'tag':'Sounds','type':'str'}
 
 	class TrialData(tables.IsDescription):
 	        """This class allows the Subject object to make a data table with the
@@ -51,7 +52,7 @@ class TuningCurve(Task):
 	}
 
 
-	def __init__(self, stage_block=None,  inter_stimulus_interval=500, stim=[{"type": "Tone"}], **kwargs):
+	def __init__(self, frequency, amplitude, duration, stage_block=None,  inter_stimulus_interval=500, **kwargs):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
