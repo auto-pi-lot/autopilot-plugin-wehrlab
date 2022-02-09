@@ -70,12 +70,11 @@ class TuningCurve(Task):
 		#this is the threading.event object that is used to advance from one stage to the next 
 
 		# Initialize stim manager
-		#if not stim:
-		#	raise RuntimeError("Cant instantiate task without stimuli!")
-		#else:
-		#	self.stim_manager = init_manager(stim)
-		#self.logger.debug('Stimulus manager initialized')
-		self.logger.debug('no Stimulus manager this time')
+		if not stim:
+			raise RuntimeError("Cant instantiate task without stimuli!")
+		else:
+			self.stim_manager = init_manager(stim)
+		self.logger.debug('Stimulus manager initialized')
 
 		#self.stim_manager = init_sounds(stim)
 		#self.logger.debug('Stimulus manager initialized')
@@ -93,23 +92,18 @@ class TuningCurve(Task):
 
 		self.hardware['LEDS']['dLED'].set(1)
 
-		Tone=autopilot.get('sound', 'Tone')
-
-		amplitudes=[.05, .1]
-		frequencies=[440, 660]
-		duration=100
-		sounds=[Tone(freq, duration, amp) for freq, amp in
-		product(amplitude, frequencies)
-		
-		# choose a random sound
-		asound = random.choice(sounds)
-		asound.buffer()
-		asound.play()
-		
-		sound_info = {k:getattr(asound, k) for k in self.stim.PARAMS}
-		self.logger.debug(f'playtone: {sound_info} ')
+		# get next stim
+		self.target, self.distractor, self.stim = self.stim_manager.next_stim()
+		self.logger.debug(f'target: {self.target}')
 
 		inter_stimulus_interval=self.inter_stimulus_interval
+
+		# buffer it
+		self.stim.buffer()
+
+		self.stim.play()
+
+		time.sleep(inter_stimulus_interval/1000)
 
 		self.hardware['LEDS']['dLED'].set(0)
 		#self.logger.debug('light off')
@@ -122,6 +116,9 @@ class TuningCurve(Task):
 		self.stage_block.set()
 		#this clears the stage block so we advance to the next stage 
 
+		# get stim info and add to data dict
+		sound_info = {k:getattr(self.stim, k) for k in self.stim.PARAMS}
+		self.logger.debug(f'playtone: {sound_info}')
 		
 		#data.update(sound_info)
 		#data.update({'type':self.stim.type})
