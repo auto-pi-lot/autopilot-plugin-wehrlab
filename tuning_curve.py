@@ -33,9 +33,9 @@ class TuningCurve(Task):
 
 	PARAMS = odict()
 	PARAMS['inter_stimulus_interval'] = {'tag':'Inter Stimulus Interval (ms)', 'type':'int'}
-	PARAMS['frequency'] = {'tag':'Sounds','type':'str'}
-	PARAMS['amplitude'] = {'tag':'Sounds','type':'str'}
-	PARAMS['duration'] = {'tag':'Sounds','type':'str'}
+	PARAMS['frequencies'] = {'tag':'list of tone frequencies in Hz','type':'str'}
+	PARAMS['amplitudes'] = {'tag':'list of tone amplitudes, 0-1','type':'str'}
+	PARAMS['duration'] = {'tag':'tone duration in ms','type':'str'}
 
 	class TrialData(tables.IsDescription):
 	        """This class allows the Subject object to make a data table with the
@@ -56,7 +56,12 @@ class TuningCurve(Task):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
-
+		self.frequencies = [float(i) for i in frequencies]
+		self.amplitudes = [float(i) for i in amplitudes]
+		duration = int(duration)
+		Tone=autopilot.get('sound', 'Tone')
+		self.sounds=[Tone(freq, duration, amp) for freq, amp in product(self.amplitudes, self.frequencies)]
+		
 		# This allows us to cycle through the task by just repeatedly calling self.stages.next()
 		stage_list = [self.playtone] #a list of only one stage, the pulse
 		self.num_stages = len(stage_list)
@@ -94,20 +99,16 @@ class TuningCurve(Task):
 
 		self.hardware['LEDS']['dLED'].set(1)
 
-		Tone=autopilot.get('sound', 'Tone')
-
-		amplitudes=[.05, .1]
-		frequencies=[440, 660]
-		duration=100
-		sounds=[Tone(freq, duration, amp) for freq, amp in
-		product(amplitude, frequencies)
+		
 		
 		# choose a random sound
-		asound = random.choice(sounds)
+		asound = random.choice(self.sounds)
 		asound.buffer()
 		asound.play()
 		
-		sound_info = {k:getattr(asound, k) for k in self.stim.PARAMS}
+		#sound_info = {k:getattr(asound, k) for k in self.stim.PARAMS}
+		sound_info = {frequency:getattr(asound, frequency)}
+		
 		self.logger.debug(f'playtone: {sound_info} ')
 
 		inter_stimulus_interval=self.inter_stimulus_interval
