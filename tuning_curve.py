@@ -56,7 +56,7 @@ class TuningCurve(Task):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
-		self.frequencies = [float(i) for i in frequencies]
+		self.frequencies = [int(i) for i in frequencies]
 		self.logger.debug(f'freqs {self.frequencies}')		
 		self.amplitudes = [float(i) for i in amplitudes]
 		duration = int(duration)
