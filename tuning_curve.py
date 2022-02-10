@@ -59,10 +59,11 @@ class TuningCurve(Task):
 		#self.frequencies = [float(i) for i in frequencies]
 		self.frequencies = float(frequencies)
 		self.logger.debug(f'freqs {self.frequencies}')		
+		self.logger.debug(f'amps {self.amplitudes}')		
 		self.amplitudes = float(amplitudes)
 		duration = int(duration)
 		Tone=autopilot.get('sound', 'Tone')
-		self.sounds=[Tone(freq, duration, amp) for freq, amp in product(self.amplitudes, self.frequencies)]
+		self.sounds=[Tone(freq, duration, amp) for freq, amp in itertools.product(self.amplitudes, self.frequencies)]
 		
 		# This allows us to cycle through the task by just repeatedly calling self.stages.next()
 		stage_list = [self.playtone] #a list of only one stage, the pulse
