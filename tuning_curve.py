@@ -33,9 +33,9 @@ class TuningCurve(Task):
 
 	PARAMS = odict()
 	PARAMS['inter_stimulus_interval'] = {'tag':'Inter Stimulus Interval (ms)', 'type':'int'}
-	PARAMS['frequencies'] = {'tag':'list of tone frequencies in Hz','type':'str'}
-	PARAMS['amplitudes'] = {'tag':'list of tone amplitudes, 0-1','type':'str'}
-	PARAMS['duration'] = {'tag':'tone duration in ms','type':'str'}
+	PARAMS['frequencies'] = {'tag':'list of tone frequencies in Hz','type':'float'}
+	PARAMS['amplitudes'] = {'tag':'list of tone amplitudes, 0-1','type':'float'}
+	PARAMS['duration'] = {'tag':'tone duration in ms','type':'int'}
 
 	class TrialData(tables.IsDescription):
 	        """This class allows the Subject object to make a data table with the
@@ -56,9 +56,10 @@ class TuningCurve(Task):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
-		self.frequencies = [int(i) for i in frequencies]
+		#self.frequencies = [float(i) for i in frequencies]
+		self.frequencies = float(frequencies)
 		self.logger.debug(f'freqs {self.frequencies}')		
-		self.amplitudes = [float(i) for i in amplitudes]
+		self.amplitudes = float(amplitudes)
 		duration = int(duration)
 		Tone=autopilot.get('sound', 'Tone')
 		self.sounds=[Tone(freq, duration, amp) for freq, amp in product(self.amplitudes, self.frequencies)]
