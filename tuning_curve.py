@@ -52,7 +52,7 @@ class TuningCurve(Task):
 	}
 
 
-	def __init__(self, frequency, amplitude, duration, stage_block=None,  inter_stimulus_interval=500, **kwargs):
+	def __init__(self, frequencies, amplitudes, duration, stage_block=None,  inter_stimulus_interval=500, **kwargs):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
