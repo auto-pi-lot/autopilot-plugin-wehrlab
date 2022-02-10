@@ -96,7 +96,9 @@ class TuningCurve(Task):
 
 		self.hardware['LEDS']['dLED'].set(1)
 
-		
+		sound_info = {frequency:getattr(self.stim, frequency)}
+
+		self.logger.debug(f'playtone: {sound_info} ')
 		
 		# choose a random sound
 		asound = random.choice(self.stim)
