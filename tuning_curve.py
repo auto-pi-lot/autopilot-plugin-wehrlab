@@ -58,9 +58,9 @@ class TuningCurve(Task):
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
 		#self.frequencies = [float(i) for i in frequencies]
 		self.frequencies = float(frequencies)
+		self.amplitudes = float(amplitudes)
 		self.logger.debug(f'freqs {self.frequencies}')		
 		self.logger.debug(f'amps {self.amplitudes}')		
-		self.amplitudes = float(amplitudes)
 		duration = int(duration)
 		Tone=autopilot.get('sound', 'Tone')
 		self.sounds=[Tone(freq, duration, amp) for freq, amp in itertools.product(self.amplitudes, self.frequencies)]
