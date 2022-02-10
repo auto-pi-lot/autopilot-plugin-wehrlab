@@ -33,9 +33,8 @@ class TuningCurve(Task):
 
 	PARAMS = odict()
 	PARAMS['inter_stimulus_interval'] = {'tag':'Inter Stimulus Interval (ms)', 'type':'int'}
-	PARAMS['frequencies'] = {'tag':'list of tone frequencies in Hz','type':'float'}
-	PARAMS['amplitudes'] = {'tag':'list of tone amplitudes, 0-1','type':'float'}
-	PARAMS['duration'] = {'tag':'tone duration in ms','type':'int'}
+	PARAMS['stim'] = {'tag':'sounds','type':'sounds'}
+
 
 	class TrialData(tables.IsDescription):
 	        """This class allows the Subject object to make a data table with the
@@ -52,18 +51,13 @@ class TuningCurve(Task):
 	}
 
 
-	def __init__(self, frequencies, amplitudes, duration, stage_block=None,  inter_stimulus_interval=500, **kwargs):
+	def __init__(self, stim=[{"type": "Tone"}], stage_block=None,  inter_stimulus_interval=500, **kwargs):
 		super(TuningCurve, self).__init__()
 		# explicitly type everything to be safe.
 		self.inter_stimulus_interval = int(inter_stimulus_interval)
-		#self.frequencies = [float(i) for i in frequencies]
-		self.frequencies = float(frequencies)
-		self.amplitudes = float(amplitudes)
-		self.logger.debug(f'freqs {self.frequencies}')		
-		self.logger.debug(f'amps {self.amplitudes}')		
-		duration = int(duration)
-		Tone=autopilot.get('sound', 'Tone')
-		self.sounds=[Tone(freq, duration, amp) for freq, amp in itertools.product(self.amplitudes, self.frequencies)]
+		self.stim=stim
+
+		
 		
 		# This allows us to cycle through the task by just repeatedly calling self.stages.next()
 		stage_list = [self.playtone] #a list of only one stage, the pulse
@@ -105,7 +99,7 @@ class TuningCurve(Task):
 		
 		
 		# choose a random sound
-		asound = random.choice(self.sounds)
+		asound = random.choice(self.stim)
 		asound.buffer()
 		asound.play()
 		
