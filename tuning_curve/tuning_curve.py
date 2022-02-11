@@ -57,9 +57,14 @@ class TuningCurve(Task):
         # explicitly type everything to be safe.
         self.inter_stimulus_interval = int(inter_stimulus_interval)
         if isinstance(frequencies, str):
-            self.frequencies = ast.literal_eval(frequencies)
+            frequencies = ast.literal_eval(frequencies)
         if isinstance(amplitudes, str):
-            self.amplitudes = ast.literal_eval(amplitudes)
+            amplitudes = ast.literal_eval(amplitudes)
+
+        self.frequencies = [float(f) for f in frequencies]
+        self.amplitudes = [float(a) for a in amplitudes]
+
+
 
         self.duration = int(duration)
 
