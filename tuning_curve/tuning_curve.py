@@ -22,8 +22,8 @@ class TuningCurve(Task):
 
     PARAMS = odict()
     PARAMS['inter_stimulus_interval'] = {'tag': 'Inter Stimulus Interval (ms)', 'type': 'int'}
-    PARAMS['frequencies'] = {'tag':'Frequencies (Hz), like [1000, 2000]', 'type':'list'}
-    PARAMS['amplitudes'] = {'tag': 'Amplitudes (0-1) like [0.1, 0.2]', 'type':'list'}
+    PARAMS['frequencies'] = {'tag':'Frequencies (Hz), like [1000, 2000]', 'type':'str'}
+    PARAMS['amplitudes'] = {'tag': 'Amplitudes (0-1) like [0.1, 0.2]', 'type':'str'}
     PARAMS['duration'] = {'tag':'Duration (ms) of each tone', 'type':'int'}
 
     class TrialData(tables.IsDescription):
