@@ -25,6 +25,8 @@ class TuningCurve(Task):
     PARAMS['frequencies'] = {'tag':'Frequencies (Hz), like [1000, 2000]', 'type':'str'}
     PARAMS['amplitudes'] = {'tag': 'Amplitudes (0-1) like [0.1, 0.2]', 'type':'str'}
     PARAMS['duration'] = {'tag':'Duration (ms) of each tone', 'type':'int'}
+    PARAMS['ramp'] = {'tag':'Ramp (ms) for rising/falling edge of each tone', 'type':'int'}
+
 
     class TrialData(tables.IsDescription):
         """This class allows the Subject object to make a data table with the
@@ -35,6 +37,8 @@ class TuningCurve(Task):
         timestamp = tables.StringCol(26)
         frequency = tables.Float32Col()
         amplitude = tables.Float32Col()
+        ramp = tables.Float32Col()
+
 
     """the only hardware here is a digital out to flash the LED.  """
     HARDWARE = {
