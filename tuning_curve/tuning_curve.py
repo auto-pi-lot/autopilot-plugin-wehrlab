@@ -15,7 +15,10 @@ from collections import OrderedDict as odict
 TASK = 'TuningCurve'
 
 class TuningCurve(Task):
-    # play an array of tones and/or whitenoise
+    # play an array of tones 
+    # signal the start of the protocol with a pulse on Protocol_Start channel
+    # signal the onset of each tone with a pulse on SoundTrigger channel
+
 
     STAGE_NAMES = ["playtone"]
     # there's only one stage, which consists of a single LED flash and play a tone
@@ -51,6 +54,7 @@ class TuningCurve(Task):
                  frequencies: typing.List[float],
                  amplitudes: typing.List[float],
                  duration:int = 500,
+                 ramp:float = 3,
                  stage_block=None,
                  inter_stimulus_interval=500,
                  **kwargs):
@@ -67,10 +71,8 @@ class TuningCurve(Task):
 
         self.frequencies = [float(f) for f in frequencies]
         self.amplitudes = [float(a) for a in amplitudes]
-
-
-
         self.duration = int(duration)
+        self.ramp = float(ramp)
 
         # This allows us to cycle through the task by just repeatedly calling self.stages.next()
         stage_list = [self.playtone]  # a list of only one stage, the pulse
@@ -84,7 +86,7 @@ class TuningCurve(Task):
 
         # make sounds from frequencies and amplitudes
         Tone = autopilot.get('sound', 'Tone')
-        self.sounds = [Tone(frequency=freq, amplitude=amp, duration=duration) for freq, amp in itertools.product(self.frequencies, self.amplitudes)]
+        self.sounds = [Tone(frequency=freq, amplitude=amp, duration=duration, ramp=ramp) for freq, amp in itertools.product(self.frequencies, self.amplitudes)]
         self.logger.debug(f'{len(self.sounds)} Tones initialized')
 
         # make a series to pulse our LED
@@ -117,7 +119,7 @@ class TuningCurve(Task):
 
         timestamp = datetime.datetime.now().isoformat()
         sound.play()
-        self.logger.debug(f"played sound with frequency {sound.frequency} and amplitude {sound.amplitude}")
+        self.logger.debug(f"played sound with frequency {sound.frequency} and amplitude {sound.amplitude} and ramp {sound.ramp}")
 
         # pulse LED
         self.hardware['LEDS']['dLED'].series(id='pulse')
@@ -129,7 +131,8 @@ class TuningCurve(Task):
             'trial_num': self.current_trial,
             'timestamp': timestamp,
             'frequency': sound.frequency,
-            'amplitude': sound.amplitude
+            'amplitude': sound.amplitude,
+            'ramp': sound.ramp
         }
 
         # set a timer to clear the stage block after the ISI
