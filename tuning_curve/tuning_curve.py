@@ -16,7 +16,7 @@ TASK = 'TuningCurve'
 
 class TuningCurve(Task):
     # play an array of tones 
-    # signal the start of the protocol with a pulse on Protocol_Start channel
+    # signal the start of the protocol with a pulse on ProtocolStart channel
     # signal the onset of each tone with a pulse on SoundTrigger channel
 
 
@@ -45,8 +45,9 @@ class TuningCurve(Task):
 
     """the only hardware here is a digital out to flash the LED.  """
     HARDWARE = {
-        'LEDS': {
-            'dLED': gpio.Digital_Out
+        'GPIO': {
+            'ProtocolStart': gpio.Digital_Out,
+            'SoundTrigger': gpio.Digital_Out
         }
     }
 
@@ -89,8 +90,9 @@ class TuningCurve(Task):
         self.sounds = [Tone(frequency=freq, amplitude=amp, duration=duration, ramp=ramp) for freq, amp in itertools.product(self.frequencies, self.amplitudes)]
         self.logger.debug(f'{len(self.sounds)} Tones initialized')
 
-        # make a series to pulse our LED
-        self.hardware['LEDS']['dLED'].store_series(id='pulse', values=[1], durations=[1], unit='ms')
+        # make a series to pulse our ProtocolStart and SoundTrigger timing signals
+        self.hardware['GPIO']['ProtocolStart'].store_series(id='pulse', values=[1], durations=[1], unit='ms')
+        self.hardware['GPIO']['SoundTrigger'].store_series(id='pulse', values=[1], durations=[1], unit='ms')
 
         # this is the threading.event object that is used to advance from one stage to the next
         if stage_block is None:
@@ -101,6 +103,9 @@ class TuningCurve(Task):
         self.isi_timer = None # type: typing.Optional[threading.Timer]
 
         self.logger.debug('Task initialized')
+        #send timing signal for start of protocol
+        self.hardware['GPIO']['ProtocolStart'].series(id='pulse')
+
 
     ##################################################################################
     # Stage Functions
@@ -118,11 +123,11 @@ class TuningCurve(Task):
         sound.buffer()
 
         timestamp = datetime.datetime.now().isoformat()
+        # timing signal for SoundTrigger 
+        self.hardware['GPIO']['SoundTrigger'].series(id='pulse')
         sound.play()
         self.logger.debug(f"played sound with frequency {sound.frequency} and amplitude {sound.amplitude} and ramp {sound.ramp}")
 
-        # pulse LED
-        self.hardware['LEDS']['dLED'].series(id='pulse')
 
         # get data to return
         self.current_trial = next(self.trial_counter)
