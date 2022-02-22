@@ -108,7 +108,7 @@ class TuningCurve(Task):
         self.hardware['GPIO']['ProtocolStart'].series(id='pulse')
 
         #wait for an ISI before delivering first tone 
-        #time.sleep(self.inter_stimulus_interval/1000) 
+        time.sleep(self.inter_stimulus_interval/1000) 
 
 
     ##################################################################################
