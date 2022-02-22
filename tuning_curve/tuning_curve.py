@@ -106,6 +106,10 @@ class TuningCurve(Task):
         #send timing signal for start of protocol
         self.hardware['GPIO']['ProtocolStart'].series(id='pulse')
 
+        #wait for an ISI before delivering first tone 
+        self.isi_timer = threading.Timer(self.inter_stimulus_interval/1000, self.stage_block.set)
+        self.isi_timer.start()
+
 
     ##################################################################################
     # Stage Functions
