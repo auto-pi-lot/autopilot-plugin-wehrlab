@@ -5,6 +5,7 @@ import threading
 import typing
 import ast
 import random
+import time
 
 import autopilot
 import autopilot.hardware.gpio
@@ -107,8 +108,7 @@ class TuningCurve(Task):
         self.hardware['GPIO']['ProtocolStart'].series(id='pulse')
 
         #wait for an ISI before delivering first tone 
-        self.isi_timer = threading.Timer(self.inter_stimulus_interval/1000, self.stage_block.set)
-        self.isi_timer.start()
+        time.sleep(self.inter_stimulus_interval/1000) 
 
 
     ##################################################################################
