@@ -43,7 +43,7 @@ class Nafc_Gap(Nafc):
     def reinforcement(self, *args, **kwargs) -> dict:
         data = super(Nafc_Gap, self).reinforcement(*args, **kwargs)
 
-        self.noise.buffer_continuous()
+        # self.noise.buffer_continuous()
 
         return data
 
