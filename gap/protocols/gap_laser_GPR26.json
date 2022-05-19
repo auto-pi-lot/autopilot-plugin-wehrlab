@@ -1,0 +1,384 @@
+[
+    {
+        "allow_repeat": false,
+        "graduation": {
+            "type": "NTrials",
+            "value": {
+                "current_trial": "0",
+                "n_trials": "200",
+                "type": "NTrials"
+            }
+        },
+        "reward": {
+          "type": "volume",
+          "value": 5.0
+        },
+        "step_name": "Free Water",
+        "task_type": "Free_Water"
+    },
+    {
+        "bias_mode": 0,
+        "correction": true,
+        "correction_pct": "40",
+        "graduation": {
+            "type": "NTrials",
+            "value": {
+                "current_trial": "0",
+                "n_trials": "300",
+                "type": "NTrials"
+            }
+        },
+        "punish_dur": "1000",
+        "req_reward": true,
+        "reward": {
+          "type": "volume",
+          "value": 3.0
+        },
+        "step_name": "request_rewards",
+        "stim": {
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap"
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap"
+                    }
+                ]
+            },
+            "tag": "Sounds",
+            "type": "sounds"
+        },
+        "task_type": "Nafc_Gap"
+    },
+    {
+        "bias_mode": 0,
+        "correction": true,
+        "correction_pct": "40",
+        "graduation": {
+            "type": "Accuracy",
+            "value": {
+                "threshold": "0.75",
+                "type": "Accuracy",
+                "window": "500"
+            }
+        },
+        "punish_dur": "2000",
+        "req_reward": false,
+        "reward": {
+          "type": "volume",
+          "value": 3
+        },
+        "step_name": "long_gap",
+        "stim": {
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap"
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap"
+                    }
+                ]
+            },
+            "tag": "Sounds",
+            "type": "sounds"
+        },
+        "task_type": "Nafc_Gap"
+    },
+    {
+        "bias_mode": 0,
+        "correction": true,
+        "correction_pct": "40",
+        "graduation": {
+            "type": "Accuracy",
+            "value": {
+                "threshold": "0.75",
+                "type": "Accuracy",
+                "window": "500"
+            }
+        },
+        "punish_dur": "2000",
+        "req_reward": false,
+        "reward": {
+          "type": "volume",
+          "value": 3
+        },
+        "step_name": "gap_128",
+        "stim": {
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap"
+                    },
+                    {
+                        "duration": "128",
+                        "type": "Gap"
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap"
+                    }
+                ]
+            },
+            "tag": "Sounds",
+            "type": "sounds"
+        },
+        "task_type": "Nafc_Gap"
+    },
+    {
+        "bias_mode": 0,
+        "correction": true,
+        "correction_pct": "40",
+        "graduation": {
+            "type": "Accuracy",
+            "value": {
+                "threshold": "0.75",
+                "type": "Accuracy",
+                "window": "500"
+            }
+        },
+        "punish_dur": "3000",
+        "req_reward": false,
+        "reward": {
+          "type": "volume",
+          "value": 3
+        },
+        "step_name": "gap_64",
+        "stim": {
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap"
+                    },
+                    {
+                        "duration": "128",
+                        "type": "Gap"
+                    },
+                    {
+                        "duration": "64",
+                        "type": "Gap"
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap"
+                    }
+                ]
+            },
+            "tag": "Sounds",
+            "type": "sounds"
+        },
+        "task_type": "Nafc_Gap"
+    },
+    {
+        "bias_mode": 0,
+        "correction": false,
+        "correction_pct": "0",
+        "graduation": {
+            "type": "Accuracy",
+            "value": {
+                "threshold": "0.70",
+                "type": "Accuracy",
+                "window": "1000"
+            }
+        },
+        "punish_dur": "5000",
+        "req_reward": false,
+        "reward": {
+          "type": "volume",
+          "value": 3
+        },
+        "step_name": "gap_all",
+        "stim": {
+            "manager": "proportional",
+            "type": "sounds",
+            "management":{"frequency_type":"within_side"},
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "128",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "64",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "32",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "24",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "16",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "8",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "6",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "4",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "2",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "1",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    }
+                ]
+            },
+            "tag": "Sounds"
+        },
+        "task_type": "Nafc_Gap"
+    },
+    {
+        "arena_led_mode": "STIM",
+        "bias_mode": false,
+        "correction": false,
+        "graduation": {
+            "type": "NTrials",
+            "value": {
+                "current_trial": "0",
+                "n_trials": "9999999",
+                "type": "NTrials"
+            }
+        },
+        "laser_durations": 25,
+        "laser_duty_cycle": [
+            0.0312,
+            0.0625,
+            0.125,
+            0.25,
+            0.5,
+            1.0
+        ],
+        "laser_freq": 200,
+        "laser_mode": "Both",
+        "laser_probability": 0.1,
+        "noise_amplitude": 0.01,
+        "punish_dur": 5000,
+        "req_reward": false,
+         "reward": {
+          "type": "volume",
+          "value": 3
+        },
+        "step_name": "2AFC_Gap_Laser",
+        "stim": {
+            "sounds": {
+                "L": [
+                    {
+                        "duration": "256",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "128",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "64",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "32",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "24",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "16",
+                        "type": "Gap",
+                        "management":{"frequency":10}
+                    },
+                    {
+                        "duration": "8",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "6",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "4",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "2",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    },
+                    {
+                        "duration": "1",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    }
+                ],
+                "R": [
+                    {
+                        "duration": "0",
+                        "type": "Gap",
+                        "management":{"frequency":1}
+                    }
+                ]
+            },
+            "tag": "Sounds",
+            "type": "sounds"
+        },
+        "task_type": "Nafc_Gap_Laser"
+    }
+]
